@@ -1,0 +1,96 @@
+= godnsrblbench(8)
+Carsten Strotmann
+v1.0.0
+:doctype: manpage
+:manmanual: GODNSRBLBENCH
+:mansource: GODNSRBLBENCH
+:man-linkstyle: pass:[blue R < >]
+
+== Name
+
+godnsrblbench - a DNS RBL benchmark tool
+
+== Synopsis
+
+*godnsrblbench* [_OPTION_]... _FILE_...
+
+== Usage
+
+$ sudo godnsrblbench -i eth0 -v -c 192.0.2.10 -s example.com -r "62.116.131.31:53/rbldns.example.org,62.116.159.19:53/example.test"
+
+== Description
+
+godnsrblbench is a DNS RBL benchmark tool. It collects RBL query results from a
+list of RBL providers and sends them to syslog, where they can be gathered for
+later comparison and analysis.
+
+The program captures all DNS pakets from a specified IP address (see: option
+*-c*). It checks if the DNS query matches the domain speficied with option
+*-s*. If the query matches the domain it will remove the domain string and it
+will create a new query for every RBL provider specified with option *-r*. The
+query results will be sent to `syslog`.
+
+
+== Options
+
+
+*-h*::
+    Output help information.
+
+*-c* _string_ (default `8.8.8.8`)::
+    IP address of the DNS server to capture messages from (default "8.8.8.8")
+
+*-i* _string_ (default `iwn0`)::
+    Interface for packet capture (default "iwn0")
+
+*-l*::
+    Enumerate network devices
+
+*-r* _string_ (default: none)::
+    List of DNS RBL Provider to test. Format '<ip>:<port>/<domain, ...'
+
+*-s* _string_ (default: none)::
+    DNS Suffix used to filter DNS query data (name of a RBLDNS provider)
+
+*-v*::
+    Verbose log output
+
+
+
+//  -i <nic>  Netzwerkschnittstelle, auf denen DNS Pakete gefiltert werden
+// sollen
+// 
+//  -v = Verbose Ausgabe
+// 
+//  -c = IP-Adresse des lokalen DNS-Servers. Nur DNS-Pakete an diese
+// Adresse werden mitgeschnitten und benutzt
+// 
+//  -s = Basisdomain des Spam-Providers des Mail-Servers. Dies ist die
+// RBL-Anfrage, welche vom MTA gesendet wird. Nur DNS-Anfragen, welche auf
+// diese Domain enden, werden fuer den Test benutzt
+// 
+//  -r = Liste von RBL Anbietern, die getestet werden sollen. Dieser
+// Parameter muss auf der Shell in Anfuehrungszeichen stehen. Die Eintraege
+// der Liste sind mit Komma getrennt. Jeder Eintrag besteht aus der
+// IP-Adresse eines authoritativen DNS-Servers des RBL-Anbieters, der
+// Port-Nummer des DNS-Dienstes (meist 53) und dem Basis-Namen des RBL-Dienstes
+
+
+// == Exit status
+// 
+// *0*::
+//   Success.
+//   Image is a picture of a life form.
+// 
+// *1*::
+//   Failure.
+//   Image is not a picture of a life form.
+
+== Resources
+
+*Project web site:* https://github.com/sys4/godnsrblbench
+
+== Copying
+
+Copyright (C) 2019 {author}. +
+Free use of this software is granted under the terms of the MIT License.
