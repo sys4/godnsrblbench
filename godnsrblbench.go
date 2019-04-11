@@ -23,11 +23,11 @@ var (
 	captureIP    string
 	domainSuffix string
 	rblserverdef string
-	err      error
-	handle   *pcap.Handle
-	InetAddr string
-	SrcIP    string
-	DstIP    string
+	err          error
+	handle       *pcap.Handle
+	InetAddr     string
+	SrcIP        string
+	DstIP        string
 )
 
 func init() {
@@ -48,7 +48,7 @@ func printLog(query, answer, dnsserver string, duration float64) {
 		logmsg = strings.Replace(logmsg, "|", logseperator, -1)
 		log.Printf(logmsg)
 	}
-	
+
 }
 
 func dnsQuery(query, dnsserver string, fverbose bool) {
@@ -99,7 +99,7 @@ func main() {
 	//rblserverdef := "8.8.8.8:53/spamhouse.com,1.1.1.1:53/abusix.de,9.9.9.9:53/nixspam.de"
 	rblservers := strings.Split(rblserverdef, ",")
 	if fverbose {
-		fmt.Println("DNS RBL Servers used:" + strings.Join(rblservers,","))
+		fmt.Println("DNS RBL Servers used:" + strings.Join(rblservers, ","))
 	}
 
 	logwriter, e := syslog.New(syslog.LOG_NOTICE, "dnsrblbench")
@@ -198,15 +198,19 @@ func main() {
 										}
 									}
 								}
-								if strings.HasSuffix(qname, domainSuffix) {
-									bname := strings.TrimSuffix(qname, domainSuffix)
-									for _, rblserver := range rblservers {
-										rblservice := strings.Split(rblserver, "/")
-										go dnsQuery(bname+rblservice[1], rblservice[0], fverbose)
-									}
-								}
-
 							}
+							if strings.HasSuffix(qname, domainSuffix) {
+								bname := strings.TrimSuffix(qname, domainSuffix)
+								for _, rblserver := range rblservers {
+									rblservice := strings.Split(rblserver, "/")
+									dnsserver := rblservice[0]
+									if !strings.Contains(dnsserver, ":") {
+										dnsserver = dnsserver + ":53"
+									}
+									go dnsQuery(bname+rblservice[1], dnsserver, fverbose)
+								}
+							}
+
 						}
 					}
 				}
