@@ -16,6 +16,7 @@ import (
 )
 
 var (
+	logseperator string
 	fverbose     bool
 	enumerateDev bool
 	devName      string
@@ -33,9 +34,21 @@ func init() {
 	flag.StringVar(&devName, "i", "iwn0", "Interface for packet capture")
 	flag.StringVar(&captureIP, "c", "8.8.8.8", "IP address of the dns server to capture messages from")
 	flag.StringVar(&domainSuffix, "s", "", "DNS Suffix used to filter DNS query data (name of a RBLDNS provider)")
-	flag.StringVar(&rblserverdef, "r", "", "List of DNS RBL Provider to test. Format '<ip>:<port>/<domain, ...'")	
+	flag.StringVar(&rblserverdef, "r", "", "List of DNS RBL Provider to test. Format '<ip>:<port>/<domain, ...'")
+	flag.StringVar(&logseperator, "S", ",", "Seperator for log fields")
 	flag.BoolVar(&enumerateDev, "l", false, "Enumerate network devices")
 	flag.BoolVar(&fverbose, "v", false, "Verbose log output")
+}
+
+func printLog(query, answer, dnsserver string, duration float64) {
+	if logseperator == "|" {
+		log.Printf("Answer: | %s | %s | %s | %f |\n", query, answer, dnsserver, duration)
+	} else {
+		logmsg := fmt.Sprintf("Answer: %s|%s|%s|%f\n", query, answer, dnsserver, duration)
+		logmsg = strings.Replace(logmsg, "|", logseperator, -1)
+		log.Printf(logmsg)
+	}
+	
 }
 
 func dnsQuery(query, dnsserver string, fverbose bool) {
@@ -61,7 +74,8 @@ func dnsQuery(query, dnsserver string, fverbose bool) {
 		panic(err)
 	}
 
-	var answer = ""
+	var answer = "--"
+	duration := time.Since(start).Seconds()
 	if len(msg.Answer) != 0 {
 		if msg.Answer[0] != nil {
 			answer = dns.Field(msg.Answer[0], 1)
@@ -71,15 +85,12 @@ func dnsQuery(query, dnsserver string, fverbose bool) {
 			// fmt.Println("Type   :", msg.Answer[0].Rrtype)
 			// fmt.Println("Type   :", msg.Answer[0].Rdata)
 		}
-		duration := time.Since(start).Seconds()
 		if fverbose {
 			fmt.Printf("Answer %s from %s received in %f seconds\n", answer, dnsserver, duration)
 		}
-		log.Printf("Answer: | %s | %s | %s | %f |\n", query, answer, dnsserver, duration)
-	} else {
-		duration := time.Since(start).Seconds()
-		log.Printf("Answer: | %s | %s | %s | %f |\n", query, "--", dnsserver, duration)
 	}
+
+	printLog(query, answer, dnsserver, duration)
 }
 
 func main() {
