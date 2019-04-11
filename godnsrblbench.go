@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"crypto/sha1"
 )
 
 var (
@@ -40,23 +41,24 @@ func init() {
 	flag.BoolVar(&fverbose, "v", false, "Verbose log output")
 }
 
-func printLog(query, answer, dnsserver string, duration float64) {
+func printLog(fp, query, answer, dnsserver string, duration float64) {
 	if logseperator == "|" {
-		log.Printf("Answer: | %s | %s | %s | %f |\n", query, answer, dnsserver, duration)
+		log.Printf("Answer: (%s) | %s | %s | %s | %f |\n", fp, query, answer, dnsserver, duration)
 	} else {
-		logmsg := fmt.Sprintf("Answer: %s|%s|%s|%f\n", query, answer, dnsserver, duration)
+		logmsg := fmt.Sprintf("Answer: (%s) %s|%s|%s|%f\n", fp, query, answer, dnsserver, duration)
 		logmsg = strings.Replace(logmsg, "|", logseperator, -1)
 		log.Printf(logmsg)
 	}
 
 }
 
-func dnsQuery(query, dnsserver string, fverbose bool) {
+func dnsQuery(fp, query, dnsserver string, fverbose bool) {
 	if fverbose {
 		fmt.Println("Query     :" + query)
 		fmt.Println("DNS-Server:" + dnsserver)
 	}
 	start := time.Now()
+	
 	conn, err := dns.DialTimeout("udp", dnsserver, time.Second)
 	if err != nil {
 		panic(err)
@@ -90,7 +92,7 @@ func dnsQuery(query, dnsserver string, fverbose bool) {
 		}
 	}
 
-	printLog(query, answer, dnsserver, duration)
+	printLog(fp, query, answer, dnsserver, duration)
 }
 
 func main() {
@@ -201,13 +203,17 @@ func main() {
 							}
 							if strings.HasSuffix(qname, domainSuffix) {
 								bname := strings.TrimSuffix(qname, domainSuffix)
+								hash := sha1.New()
+								hash.Write([]byte(time.Now().String() + bname))
+								fp := fmt.Sprintf("%x", hash.Sum(nil))[:8]
+
 								for _, rblserver := range rblservers {
 									rblservice := strings.Split(rblserver, "/")
 									dnsserver := rblservice[0]
 									if !strings.Contains(dnsserver, ":") {
 										dnsserver = dnsserver + ":53"
 									}
-									go dnsQuery(bname+rblservice[1], dnsserver, fverbose)
+									go dnsQuery(fp, bname+rblservice[1], dnsserver, fverbose)
 								}
 							}
 
