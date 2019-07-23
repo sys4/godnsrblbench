@@ -55,6 +55,11 @@ query results will be sent to `syslog`.
 *-v*::
     Verbose log output
 
+*-f*:: _string_  (default: 'SYSLOG')
+        Syslog Facility (KERN, USER, MAIL, DAEMON, AUTH, SYSLOG, LPR, NEWS, UUCP, CRON, AUTHPRIV, FTP, LOCAL[0-7])
+
+*-y*: _string_ (default 'NOTICE')
+        Syslog Severity (EMERG, ALERT, CRIT, ERR, WARNING, NOTICE, INFO, DEBUG) 
 
 
 //  -i <nic>  Netzwerkschnittstelle, auf denen DNS Pakete gefiltert werden
