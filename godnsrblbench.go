@@ -17,13 +17,16 @@ import (
 )
 
 var (
-	logseperator string
+	logseparator string
 	fverbose     bool
 	enumerateDev bool
 	devName      string
 	captureIP    string
 	domainSuffix string
 	rblserverdef string
+	logseverity  string
+	logfacility  string
+	logpriority  syslog.Priority
 	err          error
 	handle       *pcap.Handle
 	InetAddr     string
@@ -37,6 +40,8 @@ func init() {
 	flag.StringVar(&domainSuffix, "s", "", "DNS Suffix used to filter DNS query data (name of a RBLDNS provider)")
 	flag.StringVar(&rblserverdef, "r", "", "List of DNS RBL Provider to test. Format '<ip>:<port>/<domain, ...'")
 	flag.StringVar(&logseparator, "S", ",", "Separator for log fields")
+	flag.StringVar(&logseverity, "y", "NOTICE", "Syslog Severity (EMERG, ALERT, CRIT, ERR, WARNING, NOTICE, INFO, DEBUG)")
+	flag.StringVar(&logfacility, "f", "SYSLOG", "Syslog Facility (KERN, USER, MAIL, DAEMON, AUTH, SYSLOG, LPR, NEWS, UUCP, CRON, AUTHPRIV, FTP, LOCAL[0-7])")
 	flag.BoolVar(&enumerateDev, "l", false, "Enumerate network devices")
 	flag.BoolVar(&fverbose, "v", false, "Verbose log output")
 }
@@ -49,7 +54,6 @@ func printLog(fp, query, answer, dnsserver string, duration float64) {
 		logmsg = strings.Replace(logmsg, "|", logseparator, -1)
 		log.Printf(logmsg)
 	}
-
 }
 
 func dnsQuery(fp, query, dnsserver string, fverbose bool) {
@@ -97,6 +101,74 @@ func dnsQuery(fp, query, dnsserver string, fverbose bool) {
 
 func main() {
 	flag.Parse()
+
+	logpriority = 0
+	switch logseverity {
+	case "EMERG":
+		logpriority = syslog.LOG_EMERG
+	case "ALERT":
+		logpriority = syslog.LOG_ALERT
+	case "CRIT":
+		logpriority = syslog.LOG_CRIT
+	case "ERR":
+		logpriority = syslog.LOG_ERR
+	case "WARNING":
+		logpriority = syslog.LOG_WARNING
+	case "NOTICE":
+		logpriority = syslog.LOG_NOTICE
+	case "INFO":
+		logpriority = syslog.LOG_INFO
+	case "DEBUG":
+		logpriority = syslog.LOG_DEBUG
+	}
+
+	switch logfacility {
+	case "KERN":
+		logpriority = logpriority | syslog.LOG_KERN
+	case "USER":
+		logpriority = logpriority | syslog.LOG_USER
+	case "MAIL":
+		logpriority = logpriority | syslog.LOG_MAIL
+	case "DAEMON":
+		logpriority = logpriority | syslog.LOG_DAEMON
+	case "AUTH":
+		logpriority = logpriority | syslog.LOG_AUTH
+	case "SYSLOG":
+		logpriority = logpriority | syslog.LOG_SYSLOG
+	case "LPR":
+		logpriority = logpriority | syslog.LOG_LPR
+	case "NEWS":
+		logpriority = logpriority | syslog.LOG_NEWS
+	case "UUCP":
+		logpriority = logpriority | syslog.LOG_UUCP
+	case "CRON":
+		logpriority = logpriority | syslog.LOG_CRON
+	case "AUTHPRIV":
+		logpriority = logpriority | syslog.LOG_AUTHPRIV
+	case "FTP":
+		logpriority = logpriority | syslog.LOG_FTP
+	case "LOCAL0":
+		logpriority = logpriority | syslog.LOG_LOCAL0
+	case "LOCAL1":
+		logpriority = logpriority | syslog.LOG_LOCAL1
+	case "LOCAL2":
+		logpriority = logpriority | syslog.LOG_LOCAL2
+	case "LOCAL3":
+		logpriority = logpriority | syslog.LOG_LOCAL3
+	case "LOCAL4":
+		logpriority = logpriority | syslog.LOG_LOCAL4
+	case "LOCAL5":
+		logpriority = logpriority | syslog.LOG_LOCAL5
+	case "LOCAL6":
+		logpriority = logpriority | syslog.LOG_LOCAL6
+	case "LOCAL7":
+		logpriority = logpriority | syslog.LOG_LOCAL7
+	}
+
+	if fverbose {
+		fmt.Println("Syslog to           : " + logseverity + "/" + logfacility + " (" + strconv.Itoa(int(logpriority)) +")")
+	}
+
 
 	//rblserverdef := "8.8.8.8:53/spamhouse.com,1.1.1.1:53/abusix.de,9.9.9.9:53/nixspam.de"
 	rblservers := strings.Split(rblserverdef, ",")
