@@ -36,17 +36,17 @@ func init() {
 	flag.StringVar(&captureIP, "c", "8.8.8.8", "IP address of the dns server to capture messages from")
 	flag.StringVar(&domainSuffix, "s", "", "DNS Suffix used to filter DNS query data (name of a RBLDNS provider)")
 	flag.StringVar(&rblserverdef, "r", "", "List of DNS RBL Provider to test. Format '<ip>:<port>/<domain, ...'")
-	flag.StringVar(&logseperator, "S", ",", "Seperator for log fields")
+	flag.StringVar(&logseparator, "S", ",", "Separator for log fields")
 	flag.BoolVar(&enumerateDev, "l", false, "Enumerate network devices")
 	flag.BoolVar(&fverbose, "v", false, "Verbose log output")
 }
 
 func printLog(fp, query, answer, dnsserver string, duration float64) {
-	if logseperator == "|" {
+	if logseparator == "|" {
 		log.Printf("Answer: (%s) | %s | %s | %s | %f |\n", fp, query, answer, dnsserver, duration)
 	} else {
 		logmsg := fmt.Sprintf("Answer: (%s) %s|%s|%s|%f\n", fp, query, answer, dnsserver, duration)
-		logmsg = strings.Replace(logmsg, "|", logseperator, -1)
+		logmsg = strings.Replace(logmsg, "|", logseparator, -1)
 		log.Printf(logmsg)
 	}
 
@@ -58,7 +58,7 @@ func dnsQuery(fp, query, dnsserver string, fverbose bool) {
 		fmt.Println("DNS-Server:" + dnsserver)
 	}
 	start := time.Now()
-	
+
 	conn, err := dns.DialTimeout("udp", dnsserver, time.Second)
 	if err != nil {
 		panic(err)
