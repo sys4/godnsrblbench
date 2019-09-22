@@ -430,11 +430,11 @@ def DNSRBLParser():
 def main():    
     if CLIParser() != 0:
         sys.stderr.write("\nERROR:  An error has occurred at the CLIParser() and the program has been terminated!")
-        sys.exit(0)
+        sys.exit(9)
     
     if DNSRBLParser() != 0:
         sys.stderr.write("\nERROR:  An error has occurred at the DNSRBLParser() and the program has been terminated!")
-        sys.exit(0)
+        sys.exit(9)
 
     print("The -o, --outputfile %s was successfully generated and written!\n" % __outfile__)
 
