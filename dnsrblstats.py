@@ -12,6 +12,8 @@ import sys
 import tempfile
 import datetime
 
+from tld import get_fld
+
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
@@ -339,6 +341,10 @@ def DNSRBLParser():
             # Write a headline to the -o, --outputfile at first line.
             outFile.write('Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter\n')
     
+            # Init RBL statistic counter.
+            stats_rbl_count = {}
+            stats_rbl_duration_sum = {} 
+    
             # Iterate over every single temporary file.
             for tempFileRead in tempDirFiles: 
                 
@@ -349,7 +355,7 @@ def DNSRBLParser():
                 tempPathFileRead = '%s/%s' % (tmpDirName, tempFileRead)
         
                 if __DEBUG__:
-                    print(__keyvalueFormat__.format('DEBUG - tempPathFileRead', tempPathFileRead))
+                    print(__keyvalueFormat__.format('DEBUG - tempPathFileRead', tempPathFileRead))              
                 
                 # Open actual temporary file.
                 with open(tempPathFileRead,
@@ -402,8 +408,22 @@ def DNSRBLParser():
                         my_request_counter += 1
 
                         if __DEBUG__:
-                            print(__keyvalueFormat__.format('DEBUG - my_request_counter', str(my_request_counter)))                        
+                            print(__keyvalueFormat__.format('DEBUG - my_request_counter', str(my_request_counter))) 
+                            
+                        # Count requested URL domin.tld and the summary of the duration per domin.tld.
+                        if not get_fld(tempArray[item], fix_protocol=True) in stats_rbl_count:
+                            stats_rbl_count[get_fld(tempArray[item], fix_protocol=True)] = 1
+                            stats_rbl_duration_sum[get_fld(tempArray[item], fix_protocol=True)] = float(tempArray[item + 4])
+                        else:
+                            stats_rbl_count[get_fld(tempArray[item], fix_protocol=True)] += 1
+                            stats_rbl_duration_sum[get_fld(tempArray[item], fix_protocol=True)] += float(tempArray[item + 4])
+                                
+                    if __DEBUG__:
+                        print(__keyvalueFormat__.format('DEBUG - stats_rbl_count', str(stats_rbl_count)))
                         
+                    if __DEBUG__:
+                        print(__keyvalueFormat__.format('DEBUG - stats_rbl_duration_sum', str(stats_rbl_duration_sum)))
+                         
                     if __DEBUG__:
                         print(__keyvalueFormat__.format('DEBUG - my_duration_sum', str(my_duration_sum))) 
                     
@@ -426,11 +446,11 @@ def DNSRBLParser():
                         print(__keyvalueFormat__.format('DEBUG - sortList', str(sortList)))
                 
                     # Write to -o, --outputfile.
-                    outLine = '%s,%s,%s,%s,%s,%s,%s\n' % (tmp_timestamp, 
-                                                          tmp_id, 
-                                                          tmp_host,  
+                    outLine = '%s,%s,%s,%s,%s,%s,%s\n' % (tmp_timestamp,
+                                                          tmp_id,
+                                                          tmp_host,
                                                           my_duration_sum,
-                                                          my_duration_avg, 
+                                                          my_duration_avg,
                                                           my_request_counter,
                                                           str(sortList)
                                                           .replace("'", '')
@@ -442,8 +462,22 @@ def DNSRBLParser():
                     if __DEBUG__:
                         print(__keyvalueFormat__.format('DEBUG - outLine', outLine))
                 
-                tempFileReadItems.close()       
-        
+                tempFileReadItems.close()
+                
+            # Write statistic data to the -o, --outputfile at the end of file.
+            outFile.write('RBL-Seen,RBL-Count,RBL-Durationsummary,RBL-Durationaverage\n')
+            
+            for rbl,count in stats_rbl_count.items():
+                statsLine = ('%s,%s,%s,%s\n' % (rbl,
+                                         count,
+                                         stats_rbl_duration_sum[rbl],
+                                         str(float(stats_rbl_duration_sum[rbl]) / float(count))))
+                
+                outFile.write(statsLine)
+                
+                if __DEBUG__:
+                    print(__keyvalueFormat__.format('DEBUG - statsLine', statsLine))    
+                    
         outFile.close()
         
     return 0
@@ -458,7 +492,7 @@ def main():
         sys.stderr.write("\nERROR:  An error has occurred at the DNSRBLParser() and the program has been terminated!")
         sys.exit(9)
 
-    print("The -o, --outputfile %s was successfully generated and written!\n" % __outfile__)
+    print("\nThe -o, --outputfile %s was successfully generated and written!\n" % __outfile__)
 
 
 if __name__ == '__main__':
