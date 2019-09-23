@@ -2,12 +2,12 @@
 .\"     Title: dnsrblstats.py
 .\"    Author: Klaus Tachtler
 .\" Generator: Asciidoctor 1.5.6.1
-.\"      Date: 2019-09-22
+.\"      Date: 2019-09-23
 .\"    Manual: dnsrblstats.py Manual
 .\"    Source: dnsrblstats.py 0.1.
 .\"  Language: English
 .\"
-.TH "DNSRBLSTATS.PY" "8" "2019-09-22" "dnsrblstats.py 0.1." "dnsrblstats.py Manual"
+.TH "DNSRBLSTATS.PY" "8" "2019-09-23" "dnsrblstats.py 0.1." "dnsrblstats.py Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -84,7 +84,7 @@ The output format of the \-o, \-\-outputfile:
 .RS 4
 .\}
 .nf
-Timestamp,ID,Hostname,Durationsummary,[CAN REPEAT MORE THAN ONCE: RBL\-Request,Result,IP,Port,Duration]
+Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter,[CAN REPEAT MORE THAN ONCE: RBL\-Request,Result,IP,Port,Duration]
 .fi
 .if n \{\
 .RE
@@ -94,7 +94,7 @@ Timestamp,ID,Hostname,Durationsummary,[CAN REPEAT MORE THAN ONCE: RBL\-Request,R
 .RS 4
 .\}
 .nf
-2019\-06\-24T12:29:25+00:00,2c50328c,echo,0.253928,xxx.xxx.xxx.xxx.bl.mailspike.net,\-\-,xxx.xxx.xxx.xxx,53,0.041785,...
+2019\-06\-24T12:29:25+00:00,2c50328c,echo,0.253928,0.084642,3,xxx.xxx.xxx.xxx.bl.mailspike.net,\-\-,xxx.xxx.xxx.xxx,53,0.041785,...
 .fi
 .if n \{\
 .RE

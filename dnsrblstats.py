@@ -337,7 +337,7 @@ def DNSRBLParser():
               opener=None) as outFile:
             
             # Write a headline to the -o, --outputfile at first line.
-            outFile.write('Timestamp,ID,Hostname,Durationsummary\n')
+            outFile.write('Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter\n')
     
             # Iterate over every single temporary file.
             for tempFileRead in tempDirFiles: 
@@ -379,6 +379,7 @@ def DNSRBLParser():
                     # Iterate from 3 entry to the end in step 5 items
                     unsortedList = []
                     my_duration_sum = 0
+                    my_request_counter = 0
                     for item in range(3, len(tempArray), 5):
                         
                         # Create sortable result list.
@@ -397,8 +398,21 @@ def DNSRBLParser():
                         if __DEBUG__:
                             print(__keyvalueFormat__.format('DEBUG - duration', tempArray[item + 4]))                        
                         
+                        # Count the requests.
+                        my_request_counter += 1
+
+                        if __DEBUG__:
+                            print(__keyvalueFormat__.format('DEBUG - my_request_counter', str(my_request_counter)))                        
+                        
                     if __DEBUG__:
                         print(__keyvalueFormat__.format('DEBUG - my_duration_sum', str(my_duration_sum))) 
+                    
+                    # Determine the duration average.
+                    if my_duration_sum > 0 and my_request_counter > 0:
+                        my_duration_avg = my_duration_sum / my_request_counter    
+                        
+                    if __DEBUG__:
+                        print(__keyvalueFormat__.format('DEBUG - my_duration_avg', str(my_duration_avg)))                         
                         
                     if __DEBUG__:
                         print(__keyvalueFormat__.format('DEBUG - unsortedList', str(unsortedList)))
@@ -410,11 +424,17 @@ def DNSRBLParser():
                         print(__keyvalueFormat__.format('DEBUG - sortList', str(sortList)))
                 
                     # Write to -o, --outputfile.
-                    outLine = '%s,%s,%s,%s,%s\n' % (tmp_timestamp, tmp_id, tmp_host, my_duration_sum, str(sortList)
-                                                 .replace("'", '')
-                                                 .replace('[', '')
-                                                 .replace(']', '')
-                                                 .replace(' ', ''))
+                    outLine = '%s,%s,%s,%s,%s,%s,%s\n' % (tmp_timestamp, 
+                                                          tmp_id, 
+                                                          tmp_host,  
+                                                          my_duration_sum,
+                                                          my_duration_avg, 
+                                                          my_request_counter,
+                                                          str(sortList)
+                                                          .replace("'", '')
+                                                          .replace('[', '')
+                                                          .replace(']', '')
+                                                          .replace(' ', ''))
                     outFile.write(outLine)
                     
                     if __DEBUG__:
