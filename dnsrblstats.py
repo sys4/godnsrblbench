@@ -409,7 +409,9 @@ def DNSRBLParser():
                     
                     # Determine the duration average.
                     if my_duration_sum > 0 and my_request_counter > 0:
-                        my_duration_avg = my_duration_sum / my_request_counter    
+                        my_duration_avg = my_duration_sum / my_request_counter
+                    else:
+                        my_duration_avg = 0
                         
                     if __DEBUG__:
                         print(__keyvalueFormat__.format('DEBUG - my_duration_avg', str(my_duration_avg)))                         
