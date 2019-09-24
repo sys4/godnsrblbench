@@ -2,12 +2,12 @@
 .\"     Title: dnsrblstats.py
 .\"    Author: Klaus Tachtler
 .\" Generator: Asciidoctor 1.5.6.1
-.\"      Date: 2019-09-23
+.\"      Date: 2019-09-24
 .\"    Manual: dnsrblstats.py Manual
 .\"    Source: dnsrblstats.py 0.1.
 .\"  Language: English
 .\"
-.TH "DNSRBLSTATS.PY" "8" "2019-09-23" "dnsrblstats.py 0.1." "dnsrblstats.py Manual"
+.TH "DNSRBLSTATS.PY" "8" "2019-09-24" "dnsrblstats.py 0.1." "dnsrblstats.py Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -19,16 +19,16 @@
 .if \n[.g] .mso www.tmac
 .LINKSTYLE blue R < >
 .SH "NAME"
-dnsrblstats.py \- Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file, in a certain output format, for the creation of statistics.
+dnsrblstats.py \- Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file and optional a RBL statistic report file, in a certain output format, for the creation of statistics.
 .SH "SYNOPSIS"
 .sp
-\fBdnsrblstats.py [\-h] \-i [FILE] \-o [FILE] [\-v] [\-d]\fP
+\fBdnsrblstats.py [\-h] \-i [FILE] \-o [FILE] \-s [FILE] [\-v] [\-d]\fP
 .SH "DESCRIPTION"
 .sp
 Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file,
 in a certain output format, for the creation of statistics.
 .sp
-The \fIOPTION\fP \fB\-i, \-\-inputfile\fP and the \fIOPTION\fP \fB\-o, \-\-outputfile\fP are \fIREQUIRED\fP and the parameter [\fIFILE\fP] are \fIalso\fP \fIREQUIRED\fP for running the program.
+The \fIOPTION\fP \fB\-i, \-\-inputfile\fP and the \fIOPTION\fP \fB\-o, \-\-outputfile\fP are \fIREQUIRED\fP and their parameter [\fIFILE\fP] are \fIalso\fP \fIREQUIRED\fP for running the program.
 .SH "OPTIONS"
 .SS "Configuration parameter"
 .sp
@@ -40,6 +40,11 @@ The \fIOPTION\fP \fB\-i, \-\-inputfile\fP and the \fIOPTION\fP \fB\-o, \-\-outpu
 \fB\-o [FILE], \-\-outputfile [FILE]\fP
 .RS 4
 [REQUIRED] Output file for compressed data.
+.RE
+.sp
+\fB\-s [FILE], \-\-statsfile [FILE]\fP
+.RS 4
+Statistics file about the seen RBL and their use.
 .RE
 .SS "Debugging"
 .sp
@@ -90,6 +95,8 @@ Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter,[CAN REPEAT
 .RE
 .\}
 .sp
+\fIExample:\fP
+.sp
 .if n \{\
 .RS 4
 .\}
@@ -100,7 +107,7 @@ Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter,[CAN REPEAT
 .RE
 .\}
 .sp
-\fBIn addition, the following statistical data are added to the end of the file\fP:
+The output format of the \-s, \-\-statsfile:
 .sp
 .if n \{\
 .RS 4
@@ -111,6 +118,8 @@ RBL\-Seen,RBL\-Count,RBL\-Durationsummary,RBL\-Durationaverage
 .if n \{\
 .RE
 .\}
+.sp
+\fIExample:\fP
 .sp
 .if n \{\
 .RS 4

@@ -8,18 +8,18 @@ Klaus Tachtler
 
 == NAME
 
-dnsrblstats.py - Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file, in a certain output format, for the creation of statistics.
+dnsrblstats.py - Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file and optional a RBL statistic report file, in a certain output format, for the creation of statistics.
 
 == SYNOPSIS
 
-*dnsrblstats.py [-h] -i [FILE] -o [FILE] [-v] [-d]*
+*dnsrblstats.py [-h] -i [FILE] -o [FILE] -s [FILE] [-v] [-d]*
 
 == DESCRIPTION
 
 Program for the compression of log files, collected by the program godnsrblbench, for the creation of a compressed output file,
 in a certain output format, for the creation of statistics.
 
-The _OPTION_ *-i, --inputfile* and the _OPTION_ *-o, --outputfile* are _REQUIRED_ and the parameter [_FILE_] are _also_ _REQUIRED_ for running the program.
+The _OPTION_ *-i, --inputfile* and the _OPTION_ *-o, --outputfile* are _REQUIRED_ and their parameter [_FILE_] are _also_ _REQUIRED_ for running the program.
 
 == OPTIONS
 
@@ -30,6 +30,9 @@ The _OPTION_ *-i, --inputfile* and the _OPTION_ *-o, --outputfile* are _REQUIRED
   
 *-o [FILE], --outputfile [FILE]*::
   [REQUIRED] Output file for compressed data.
+  
+*-s [FILE], --statsfile [FILE]*::
+  Statistics file about the seen RBL and their use.
 
 === Debugging
 
@@ -68,16 +71,18 @@ The output format of the -o, --outputfile:
 ....
 Timestamp,ID,Hostname,Durationsummary,Durationaverage,Requestcounter,[CAN REPEAT MORE THAN ONCE: RBL-Request,Result,IP,Port,Duration]
 ....
+_Example:_
 [source,ini]
 ....
 2019-06-24T12:29:25+00:00,2c50328c,echo,0.253928,0.084642,3,xxx.xxx.xxx.xxx.bl.mailspike.net,--,xxx.xxx.xxx.xxx,53,0.041785,...
 ....
 
-*In addition, the following statistical data are added to the end of the file*:
+The output format of the -s, --statsfile:
 [source,ini]
 ....
 RBL-Seen,RBL-Count,RBL-Durationsummary,RBL-Durationaverage
 ....
+_Example:_
 [source,ini]
 ....
 mailspike.net,184,1.895781,0.010303157608696
