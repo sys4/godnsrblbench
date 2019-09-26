@@ -11,6 +11,7 @@ import os
 import sys
 import tempfile
 import datetime
+import collections
 
 from tld import get_fld
 
@@ -517,7 +518,10 @@ def DNSRBLParser():
                 #  Write a headline to the -s, --statsfile at first line.
                 statsFile.write('RBL-Seen,RBL-Count,RBL-Durationsummary,RBL-Durationaverage\n')
                 
-                for rbl, count in stats_rbl_count.items():
+                # Sort the statistic RBL result by key (alphabetical sorting of the RBL).
+                stats_rbl_count_sorted = collections.OrderedDict(sorted(stats_rbl_count.items()))
+                
+                for rbl, count in stats_rbl_count_sorted.items():
                     statsLine = ('%s,%s,%s,%s\n' % (rbl,
                                              count,
                                              stats_rbl_duration_sum[rbl],
