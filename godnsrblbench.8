@@ -1,0 +1,99 @@
+'\" t
+.\"     Title: godnsrblbench
+.\"    Author: Carsten Strotmann
+.\" Generator: Asciidoctor 1.5.6.1
+.\"      Date: 2019-09-19
+.\"    Manual: GODNSRBLBENCH
+.\"    Source: GODNSRBLBENCH
+.\"  Language: English
+.\"
+.TH "GODNSRBLBENCH" "8" "2019-09-19" "GODNSRBLBENCH" "GODNSRBLBENCH"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.LINKSTYLE blue R < >
+.SH "NAME"
+godnsrblbench \- a DNS RBL benchmark tool
+.SH "SYNOPSIS"
+.sp
+\fBgodnsrblbench\fP [\fIOPTION\fP]... \fIFILE\fP...
+.SH "USAGE"
+.sp
+$ sudo godnsrblbench \-i eth0 \-v \-c 192.0.2.10 \-s example.com \-r "62.116.131.31:53/rbldns.example.org,62.116.159.19:53/example.test"
+.SH "DESCRIPTION"
+.sp
+godnsrblbench is a DNS RBL benchmark tool. It collects RBL query results from a
+list of RBL providers and sends them to syslog, where they can be gathered for
+later comparison and analysis.
+.sp
+The program captures all DNS pakets from a specified IP address (see: option
+\fB\-c\fP). It checks if the DNS query matches the domain speficied with option
+\fB\-s\fP. If the query matches the domain it will remove the domain string and it
+will create a new query for every RBL provider specified with option \fB\-r\fP. The
+query results will be sent to \f[CR]syslog\fP.
+.SH "OPTIONS"
+.sp
+\fB\-h\fP
+.RS 4
+Output help information.
+.RE
+.sp
+\fB\-c\fP \fIstring\fP (default \f[CR]8.8.8.8\fP)
+.RS 4
+IP address of the DNS server to capture messages from (default "8.8.8.8")
+.RE
+.sp
+\fB\-i\fP \fIstring\fP (default \f[CR]iwn0\fP)
+.RS 4
+Interface for packet capture (default "iwn0")
+.RE
+.sp
+\fB\-l\fP
+.RS 4
+Enumerate network devices
+.RE
+.sp
+\fB\-r\fP \fIstring\fP (default: none)
+.RS 4
+List of DNS RBL Provider to test. Format \(aq<ip>:<port>/<domain, ...\(aq
+.RE
+.sp
+\fB\-s\fP \fIstring\fP (default: none)
+.RS 4
+DNS Suffix used to filter DNS query data (name of a RBLDNS provider)
+.RE
+.sp
+\fB\-v\fP
+.RS 4
+Verbose log output
+.RE
+.sp
+\fB\-f\fP
+.RS 4
+\fIstring\fP  (default: \(aqSYSLOG\(aq)
+Syslog Facility (KERN, USER, MAIL, DAEMON, AUTH, SYSLOG, LPR, NEWS, UUCP, CRON, AUTHPRIV, FTP, LOCAL[0\-7])
+.RE
+.sp
+\fB\-y\fP: \fIstring\fP (default \(aqNOTICE\(aq)
+        Syslog Severity (EMERG, ALERT, CRIT, ERR, WARNING, NOTICE, INFO, DEBUG)
+.SH "RESOURCES"
+.sp
+\fBProject web site:\fP \c
+.URL "https://github.com/sys4/godnsrblbench" "" ""
+.SH "COPYING"
+.sp
+Copyright \(co 2019 Carsten Strotmann.
+.br
+Free use of this software is granted under the terms of the MIT License.
+.SH "AUTHOR(S)"
+.sp
+\fBCarsten Strotmann\fP
+.RS 4
+Author(s).
+.RE

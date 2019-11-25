@@ -1,0 +1,6 @@
+.settings/
+__pycache__/
+*.log
+*.csv
+.project
+.pydevproject
